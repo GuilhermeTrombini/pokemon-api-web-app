@@ -1,61 +1,32 @@
-import React, { useState } from "react";
+import React from "react";
+import { Grid } from "@chakra-ui/react";
 
-import { useAppSelector, useAppDispatch } from "../../app/hooks";
-import { remove, editPokemon, selectCount } from "./pokedashSlice";
-import styles from "./Pokedash.module.css";
+import { useAppSelector } from "../../app/hooks";
+import { pokemons } from "../../app/pokedashSlice";
+import { Card } from "../Card";
+
+interface PokemonObj {
+  id: number;
+  name: string;
+  img: string;
+  species: string;
+  health: number;
+  height: number;
+  weight: number;
+  attack: number;
+  defense: number;
+}
 
 export function Pokedash() {
-  const count = useAppSelector(selectCount);
-  const dispatch = useAppDispatch();
-  const [incrementAmount, setIncrementAmount] = useState("2");
-
-  const incrementValue = Number(incrementAmount) || 0;
+  const myPokemons = useAppSelector(pokemons);
 
   return (
     <div>
-      <div className={styles.row}>
-        <button
-          className={styles.button}
-          aria-label="Decrement value"
-          onClick={() => dispatch(decrement())}
-        >
-          -
-        </button>
-        <span className={styles.value}>{count}</span>
-        <button
-          className={styles.button}
-          aria-label="Increment value"
-          onClick={() => dispatch(increment())}
-        >
-          +
-        </button>
-      </div>
-      <div className={styles.row}>
-        <input
-          className={styles.textbox}
-          aria-label="Set increment amount"
-          value={incrementAmount}
-          onChange={(e) => setIncrementAmount(e.target.value)}
-        />
-        <button
-          className={styles.button}
-          onClick={() => dispatch(incrementByAmount(incrementValue))}
-        >
-          Add Amount
-        </button>
-        <button
-          className={styles.asyncButton}
-          onClick={() => dispatch(incrementAsync(incrementValue))}
-        >
-          Add Async
-        </button>
-        <button
-          className={styles.button}
-          onClick={() => dispatch(incrementIfOdd(incrementValue))}
-        >
-          Add If Odd
-        </button>
-      </div>
+      <Grid templateColumns="repeat(5, 1fr)" gap={6}>
+        {myPokemons.pokemons.map((pokemon: PokemonObj, index) => {
+          return <Card key={index} pokemon={pokemon} />;
+        })}
+      </Grid>
     </div>
   );
 }
