@@ -66,7 +66,16 @@ export function Searcher() {
           </Button>
         </InputRightElement>
       </InputGroup>
-      <Grid templateColumns="repeat(4, 1fr)" gap={6}>
+      <Grid
+        templateColumns={
+          window.innerWidth > 1024
+            ? "repeat(4, 1fr)"
+            : window.innerWidth > 768
+            ? "repeat(2, 1fr)"
+            : "repeat(1, 1fr)"
+        }
+        gap={6}
+      >
         {pokemonSearched.map((pokemon: any, index: any) => {
           const newPokemonObject: PokemonObj = {
             id: pokemon.id,

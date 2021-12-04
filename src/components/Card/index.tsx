@@ -38,10 +38,24 @@ export function Card({ pokemon, onEditClick, setEditingPokemon, isAdd }: any) {
       });
     } else {
       dispatch(add(pokemonToAdd));
+      toast({
+        title: "Success!",
+        description: "Pokemon added to your pokedex!",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
     }
   };
   const handleRemove = (id: number) => {
     dispatch(remove(id));
+    toast({
+      title: "Success!",
+      description: "Pokemon removed from your pokedex!",
+      status: "success",
+      duration: 3000,
+      isClosable: true,
+    });
   };
 
   return (
@@ -57,14 +71,15 @@ export function Card({ pokemon, onEditClick, setEditingPokemon, isAdd }: any) {
       <Box mt="1" fontWeight="semibold" as="h4" lineHeight="tight" isTruncated>
         {pokemon.name}
       </Box>
-      <Box p="6">
-        <Badge borderRadius="full" px="2" colorScheme="teal">
-          {pokemon.species}
-        </Badge>
+      <Badge borderRadius="full" px="5" colorScheme="teal">
+        Species: {pokemon.species}
+      </Badge>
+      <Box p="4">
         <Box
           display="flex"
+          margin="5px 0px"
           alignItems="baseline"
-          justifyContent="space-between"
+          justifyContent="space-evenly"
           paddingTop="0px"
         >
           <Box
@@ -89,12 +104,6 @@ export function Card({ pokemon, onEditClick, setEditingPokemon, isAdd }: any) {
             <Box>Weight</Box>
             <Box>{pokemon.weight}</Box>
           </Box>
-        </Box>
-        <Box
-          display="flex"
-          alignItems="baseline"
-          justifyContent="space-between"
-        >
           <Box
             color="gray.500"
             fontWeight="semibold"
@@ -106,6 +115,13 @@ export function Card({ pokemon, onEditClick, setEditingPokemon, isAdd }: any) {
             <Box>HP</Box>
             <Box>{pokemon.health}</Box>
           </Box>
+        </Box>
+        <Box
+          display="flex"
+          margin="5px 0px"
+          alignItems="baseline"
+          justifyContent="space-evenly"
+        >
           <Box
             color="gray.500"
             fontWeight="semibold"
@@ -130,19 +146,19 @@ export function Card({ pokemon, onEditClick, setEditingPokemon, isAdd }: any) {
           </Box>
         </Box>
       </Box>
-      <Box display="flex" p="2" justifyContent="space-around">
+      <Box display="flex" p="3" justifyContent="space-around">
         {isAdd ? (
-          <Button onClick={() => handleAdd(pokemon)}>Adicionar</Button>
+          <Button onClick={() => handleAdd(pokemon)}>Add</Button>
         ) : (
           <>
-            <Button onClick={() => handleRemove(pokemon.id)}>Remover</Button>
+            <Button onClick={() => handleRemove(pokemon.id)}>Remove</Button>
             <Button
               onClick={() => {
                 onEditClick(true);
                 setEditingPokemon(pokemon);
               }}
             >
-              Editar
+              Edit
             </Button>
           </>
         )}

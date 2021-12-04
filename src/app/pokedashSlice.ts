@@ -39,11 +39,25 @@ export const pokemonSlice = createSlice({
       state.pokemons.push(action.payload);
     },
     remove: (state, action) => {
-      const indexToRemove = state.pokemons.indexOf(action.payload.id);
+      var indexToRemove = -1;
+      state.pokemons.map((item, index) => {
+        if (item.id === action.payload.id) {
+          return (indexToRemove = index);
+        } else {
+          return null;
+        }
+      });
       state.pokemons.splice(indexToRemove, 1);
     },
     editPokemon: (state, action) => {
-      const indexToEdit = state.pokemons.indexOf(action.payload.id);
+      var indexToEdit = -1;
+      state.pokemons.map((item, index) => {
+        if (item.id === action.payload.id) {
+          return (indexToEdit = index);
+        } else {
+          return null;
+        }
+      });
       state.pokemons[indexToEdit] = action.payload;
     },
   },

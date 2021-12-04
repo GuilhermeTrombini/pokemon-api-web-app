@@ -9,7 +9,6 @@ import {
   ModalBody,
   ModalCloseButton,
   Button,
-  FormControl,
   FormLabel,
   Input,
 } from "@chakra-ui/react";
@@ -17,7 +16,7 @@ import {
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { editPokemon, pokemons } from "../../app/pokedashSlice";
 import { Card } from "../Card";
-import { Formik, Form } from "formik";
+import { Formik, Form, Field } from "formik";
 
 interface PokemonObj {
   id: number;
@@ -41,11 +40,11 @@ export function Pokedash() {
       name: formObject.name,
       img: pokemon.img,
       species: pokemon.species,
-      health: formObject.health,
-      height: formObject.height,
-      weight: formObject.weight,
-      attack: formObject.attack,
-      defense: formObject.defense,
+      health: Number(formObject.health),
+      height: Number(formObject.height),
+      weight: Number(formObject.weight),
+      attack: Number(formObject.attack),
+      defense: Number(formObject.defense),
     };
     dispatch(editPokemon(newPokemonObject));
     setIsOpen(false);
@@ -53,103 +52,144 @@ export function Pokedash() {
   return (
     <div>
       <Modal isOpen={isOpen} onClose={() => setIsOpen(false)}>
-        <Formik
-          initialValues={{ name: editingPokemon.name }}
-          onSubmit={(values, actions) => {
-            handleEdit(values, editingPokemon);
-          }}
-        >
-          <Form>
-            <ModalOverlay />
-            <ModalContent>
-              <ModalHeader>Edit your pokemon</ModalHeader>
-              <ModalCloseButton />
-              <ModalBody>
-                {" "}
-                <FormControl>
-                  <FormLabel htmlFor="name">Name</FormLabel>
-                  <Input
-                    defaultValue={editingPokemon.name}
-                    id="name"
-                    placeholder="name"
-                  />
-                  <FormLabel htmlFor="health">Health</FormLabel>
-                  <Input
-                    defaultValue={editingPokemon.health}
-                    id="health"
-                    placeholder="health"
-                  />
-                  <FormLabel htmlFor="height">Height</FormLabel>
-                  <Input
-                    defaultValue={editingPokemon.height}
-                    id="height"
-                    placeholder="height"
-                  />
-                  <FormLabel htmlFor="weight">Weight</FormLabel>
-                  <Input
-                    defaultValue={editingPokemon.weight}
-                    id="weight"
-                    placeholder="weight"
-                  />
-                  <FormLabel htmlFor="attack">Attack</FormLabel>
-                  <Input
-                    defaultValue={editingPokemon.attack}
-                    id="attack"
-                    placeholder="attack"
-                  />
-                  <FormLabel htmlFor="defense">Defense</FormLabel>
-                  <Input
-                    defaultValue={editingPokemon.defense}
-                    id="defense"
-                    placeholder="defense"
-                  />
-                </FormControl>
-              </ModalBody>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Edit your pokemon</ModalHeader>
+          <ModalCloseButton />
+          <Formik
+            initialValues={{
+              name: editingPokemon.name,
+              health: editingPokemon.health,
+              height: editingPokemon.height,
+              weight: editingPokemon.weight,
+              attack: editingPokemon.attack,
+              defense: editingPokemon.defense,
+            }}
+            onSubmit={(values, actions) => {
+              handleEdit(values, editingPokemon);
+              actions.setSubmitting(false);
+            }}
+          >
+            {(props) => (
+              <Form>
+                <ModalBody>
+                  <Field name="name">
+                    {({ field }: any) => (
+                      <>
+                        <FormLabel htmlFor="name">Name</FormLabel>
+                        <Input
+                          {...field}
+                          type="text"
+                          id="name"
+                          placeholder="name"
+                        />
+                      </>
+                    )}
+                  </Field>
+                  <Field name="health">
+                    {({ field }: any) => (
+                      <>
+                        <FormLabel htmlFor="health">Health</FormLabel>
+                        <Input
+                          {...field}
+                          type="number"
+                          id="health"
+                          placeholder="health"
+                        />
+                      </>
+                    )}
+                  </Field>
+                  <Field name="height">
+                    {({ field }: any) => (
+                      <>
+                        <FormLabel htmlFor="height">Height</FormLabel>
+                        <Input
+                          {...field}
+                          type="number"
+                          id="height"
+                          placeholder="height"
+                        />
+                      </>
+                    )}
+                  </Field>
+                  <Field name="weight">
+                    {({ field }: any) => (
+                      <>
+                        <FormLabel htmlFor="weight">Weight</FormLabel>
+                        <Input
+                          {...field}
+                          type="number"
+                          id="weight"
+                          placeholder="weight"
+                        />
+                      </>
+                    )}
+                  </Field>
+                  <Field name="attack">
+                    {({ field }: any) => (
+                      <>
+                        <FormLabel htmlFor="attack">Attack</FormLabel>
+                        <Input
+                          {...field}
+                          type="number"
+                          id="attack"
+                          placeholder="attack"
+                        />
+                      </>
+                    )}
+                  </Field>
+                  <Field name="defense">
+                    {({ field }: any) => (
+                      <>
+                        <FormLabel htmlFor="defense">Defense</FormLabel>
+                        <Input
+                          {...field}
+                          type="number"
+                          id="defense"
+                          placeholder="defense"
+                        />
+                      </>
+                    )}
+                  </Field>
+                </ModalBody>
 
-              <ModalFooter>
-                <Button type="submit" colorScheme="blue" mr={3}>
-                  Salvar
-                </Button>
-              </ModalFooter>
-            </ModalContent>
-          </Form>
-        </Formik>
+                <ModalFooter>
+                  <Button
+                    type="submit"
+                    isLoading={props.isSubmitting}
+                    colorScheme="blue"
+                    mr={3}
+                  >
+                    Salvar
+                  </Button>
+                </ModalFooter>
+              </Form>
+            )}
+          </Formik>
+        </ModalContent>
       </Modal>
-      {window.innerWidth > 1024 ? (
-        <Grid templateColumns="repeat(4, 1fr)" gap={3}>
-          {myPokemons.pokemons.map((pokemon: any, index) => {
-            return (
-              <Card
-                key={index}
-                pokemon={pokemon}
-                onEditClick={setIsOpen}
-                setEditingPokemon={setEditingPokemon}
-                isAdd={false}
-              />
-            );
-          })}
-        </Grid>
-      ) : (
-        <div
-          style={{
-            display: "flex",
-            overflow: "auto",
-            justifyContent: "space-between",
-          }}
-        >
-          {myPokemons.pokemons.map((pokemon: any, index) => {
-            return (
-              <Card
-                key={index}
-                pokemon={pokemon}
-                onEditClick={setIsOpen}
-                setEditingPokemon={setEditingPokemon}
-                isAdd={false}
-              />
-            );
-          })}
-        </div>
-      )}
+      <Grid
+        templateColumns={
+          window.innerWidth > 1024
+            ? "repeat(4, 1fr)"
+            : window.innerWidth > 768
+            ? "repeat(2, 1fr)"
+            : "repeat(1, 1fr)"
+        }
+        gap={3}
+      >
+        {myPokemons.pokemons.map((pokemon: any, index) => {
+          return (
+            <Card
+              key={index}
+              pokemon={pokemon}
+              onEditClick={setIsOpen}
+              setEditingPokemon={setEditingPokemon}
+              isAdd={false}
+            />
+          );
+        })}
+      </Grid>
     </div>
   );
 }
