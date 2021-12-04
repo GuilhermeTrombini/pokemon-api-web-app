@@ -1,0 +1,13 @@
+.cardDiv {
+  margin: 15px 15px 0px 0px;
+}
+
+@media (min-width: 768px) {
+  .cardDiv {
+  }
+}
+
+@media (min-width: 1024px) {
+  .cardDiv {
+  }
+}

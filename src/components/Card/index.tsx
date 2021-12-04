@@ -1,18 +1,9 @@
-import React, { useState } from "react";
-import {
-  Input,
-  Button,
-  Box,
-  Image,
-  Badge,
-  FormControl,
-  FormLabel,
-} from "@chakra-ui/react";
+import React from "react";
+import { Button, Box, Image, Badge, useToast } from "@chakra-ui/react";
 
-import { Field, Form, Formik } from "formik";
-import { useAppDispatch } from "../../app/hooks";
-import { remove, editPokemon } from "../../app/pokedashSlice";
-
+import { useAppDispatch, useAppSelector } from "../../app/hooks";
+import { remove, add, pokemons } from "../../app/pokedashSlice";
+import "./Card.css";
 interface PokemonObj {
   id: number;
   name: string;
@@ -24,89 +15,57 @@ interface PokemonObj {
   attack: number;
   defense: number;
 }
-
-export function Card(pokemon: any) {
-  const [isEditing, setIsEditing] = useState(false);
+export function Card({ pokemon, onEditClick, setEditingPokemon, isAdd }: any) {
   const dispatch = useAppDispatch();
-
-  const handleEdit = (formObject: any) => {
-    const newPokemonObject: PokemonObj = {
-      id: pokemon.id,
-      name: formObject.name,
-      img: pokemon.img,
-      species: pokemon.species,
-      health: formObject.health,
-      height: formObject.height,
-      weight: formObject.weight,
-      attack: formObject.attack,
-      defense: formObject.defense,
-    };
-    dispatch(editPokemon(newPokemonObject));
+  const myPokemons = useAppSelector(pokemons);
+  const toast = useToast();
+  const handleAdd = (pokemonToAdd: PokemonObj) => {
+    const arrayRepeat = [];
+    myPokemons.pokemons.map((item) => {
+      if (item.id === pokemonToAdd.id) {
+        return arrayRepeat.push(item);
+      } else {
+        return null;
+      }
+    });
+    if (arrayRepeat.length > 0) {
+      return toast({
+        title: "An error occurred",
+        description: "You already have this pokemon on your pokedex",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    } else {
+      dispatch(add(pokemonToAdd));
+    }
   };
-
   const handleRemove = (id: number) => {
     dispatch(remove(id));
   };
 
   return (
-    <Box maxW="sm" borderWidth="1px" borderRadius="lg" overflow="hidden">
-      <Image src={pokemon.img} alt={pokemon.name} />
-      {isEditing ? (
-        <Formik
-          initialValues={{ name: "Sasuke" }}
-          onSubmit={(values, actions) => {
-            setTimeout(() => {
-              alert(JSON.stringify(values, null, 2));
-              actions.setSubmitting(false);
-              handleEdit(values);
-            }, 1000);
-          }}
-        >
-          {(props) => (
-            <Form>
-              <Field name="name">
-                {({ field }: any) => (
-                  <FormControl>
-                    <FormLabel htmlFor="name">Name</FormLabel>
-                    <Input {...field} id="name" placeholder="name" />
-                    <FormLabel htmlFor="health">Health</FormLabel>
-                    <Input {...field} id="health" placeholder="health" />
-                    <FormLabel htmlFor="height">Height</FormLabel>
-                    <Input {...field} id="height" placeholder="height" />
-                    <FormLabel htmlFor="weight">Weight</FormLabel>
-                    <Input {...field} id="weight" placeholder="weight" />
-                    <FormLabel htmlFor="attack">Attack</FormLabel>
-                    <Input {...field} id="attack" placeholder="attack" />
-                    <FormLabel htmlFor="defense">Defense</FormLabel>
-                    <Input {...field} id="defense" placeholder="defense" />
-                  </FormControl>
-                )}
-              </Field>
-              <Button
-                mt={4}
-                colorScheme="teal"
-                isLoading={props.isSubmitting}
-                type="submit"
-              >
-                Submit
-              </Button>
-            </Form>
-          )}
-        </Formik>
-      ) : (
-        <></>
-      )}
+    <Box
+      maxW="sm"
+      minWidth="280px"
+      borderWidth="1px"
+      borderRadius="lg"
+      overflow="hidden"
+      className="cardDiv"
+    >
+      <Image width="100%" src={pokemon.img} alt={pokemon.name} />
       <Box mt="1" fontWeight="semibold" as="h4" lineHeight="tight" isTruncated>
         {pokemon.name}
       </Box>
       <Box p="6">
         <Badge borderRadius="full" px="2" colorScheme="teal">
-          New
+          {pokemon.species}
         </Badge>
         <Box
           display="flex"
           alignItems="baseline"
           justifyContent="space-between"
+          paddingTop="0px"
         >
           <Box
             color="gray.500"
@@ -119,7 +78,14 @@ export function Card(pokemon: any) {
             <Box>Height</Box>
             <Box>{pokemon.height}</Box>
           </Box>
-          <Box>
+          <Box
+            color="gray.500"
+            fontWeight="semibold"
+            letterSpacing="wide"
+            fontSize="xs"
+            textTransform="uppercase"
+            ml="2"
+          >
             <Box>Weight</Box>
             <Box>{pokemon.weight}</Box>
           </Box>
@@ -140,19 +106,46 @@ export function Card(pokemon: any) {
             <Box>HP</Box>
             <Box>{pokemon.health}</Box>
           </Box>
-          <Box>
+          <Box
+            color="gray.500"
+            fontWeight="semibold"
+            letterSpacing="wide"
+            fontSize="xs"
+            textTransform="uppercase"
+            ml="2"
+          >
             <Box>Attack</Box>
             <Box>{pokemon.attack}</Box>
           </Box>
-          <Box>
+          <Box
+            color="gray.500"
+            fontWeight="semibold"
+            letterSpacing="wide"
+            fontSize="xs"
+            textTransform="uppercase"
+            ml="2"
+          >
             <Box>Defense</Box>
             <Box>{pokemon.defense}</Box>
           </Box>
         </Box>
       </Box>
-      <Box display="flex">
-        <Button onClick={() => handleRemove(pokemon.id)}>Remover</Button>
-        <Button onClick={() => setIsEditing(true)}>Editar</Button>
+      <Box display="flex" p="2" justifyContent="space-around">
+        {isAdd ? (
+          <Button onClick={() => handleAdd(pokemon)}>Adicionar</Button>
+        ) : (
+          <>
+            <Button onClick={() => handleRemove(pokemon.id)}>Remover</Button>
+            <Button
+              onClick={() => {
+                onEditClick(true);
+                setEditingPokemon(pokemon);
+              }}
+            >
+              Editar
+            </Button>
+          </>
+        )}
       </Box>
     </Box>
   );

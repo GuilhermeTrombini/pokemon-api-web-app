@@ -6,14 +6,10 @@ import {
   Button,
   useToast,
   Grid,
-  Box,
-  Image,
-  Badge,
 } from "@chakra-ui/react";
 import { FaSearch } from "react-icons/fa";
-import { useAppDispatch } from "../../app/hooks";
-import { add } from "../../app/pokedashSlice";
 import PokemonApi from "../../PokemonApi";
+import { Card } from "../Card";
 interface PokemonObj {
   id: number;
   name: string;
@@ -26,23 +22,24 @@ interface PokemonObj {
   defense: number;
 }
 export function Searcher() {
-  const [pokemonSearched, setPokemonSearched] = useState([]);
+  const [pokemonSearched, setPokemonSearched]: any = useState([]);
   const [searchName, setSearchName] = useState("");
   const toast = useToast();
-  const dispatch = useAppDispatch();
-
-  const handleAdd = (pokemonToAdd: PokemonObj) => {
-    dispatch(add(pokemonToAdd));
-  };
 
   const handleSearch = async (keyword: string) => {
+    const arrayToSet: any = [];
     try {
       const response: any = await PokemonApi.get(`/pokemon/${keyword}`);
-      setPokemonSearched(response.data.results);
+      if (response.data.results) {
+        return response.data.results;
+      } else {
+        arrayToSet.push(response.data);
+        setPokemonSearched(arrayToSet);
+      }
     } catch (rejection: any) {
       toast({
         title: "An error occurred",
-        description: rejection,
+        description: "An error occurred on finding this pokemon",
         status: "error",
         duration: 3000,
         isClosable: true,
@@ -69,80 +66,27 @@ export function Searcher() {
           </Button>
         </InputRightElement>
       </InputGroup>
-      <Grid templateColumns="repeat(5, 1fr)" gap={6}>
-        {pokemonSearched.map((pokemon: any) => {
+      <Grid templateColumns="repeat(4, 1fr)" gap={6}>
+        {pokemonSearched.map((pokemon: any, index: any) => {
+          const newPokemonObject: PokemonObj = {
+            id: pokemon.id,
+            name: pokemon.name,
+            img: pokemon.sprites?.front_default,
+            species: pokemon.species.name,
+            health: pokemon.stats[0]?.base_stat,
+            height: pokemon.height,
+            weight: pokemon.weight,
+            attack: pokemon.stats[1]?.base_stat,
+            defense: pokemon.stats[2]?.base_stat,
+          };
           return (
-            <Box
-              maxW="sm"
-              borderWidth="1px"
-              borderRadius="lg"
-              overflow="hidden"
-            >
-              <Image src={pokemon.img} alt={pokemon.name} />
-              <Box
-                mt="1"
-                fontWeight="semibold"
-                as="h4"
-                lineHeight="tight"
-                isTruncated
-              >
-                {pokemon.name}
-              </Box>
-              <Box p="6">
-                <Badge borderRadius="full" px="2" colorScheme="teal">
-                  New
-                </Badge>
-                <Box
-                  display="flex"
-                  alignItems="baseline"
-                  justifyContent="space-between"
-                >
-                  <Box
-                    color="gray.500"
-                    fontWeight="semibold"
-                    letterSpacing="wide"
-                    fontSize="xs"
-                    textTransform="uppercase"
-                    ml="2"
-                  >
-                    <Box>Height</Box>
-                    <Box>{pokemon.height}</Box>
-                  </Box>
-                  <Box>
-                    <Box>Weight</Box>
-                    <Box>{pokemon.weight}</Box>
-                  </Box>
-                </Box>
-                <Box
-                  display="flex"
-                  alignItems="baseline"
-                  justifyContent="space-between"
-                >
-                  <Box
-                    color="gray.500"
-                    fontWeight="semibold"
-                    letterSpacing="wide"
-                    fontSize="xs"
-                    textTransform="uppercase"
-                    ml="2"
-                  >
-                    <Box>HP</Box>
-                    <Box>{pokemon.health}</Box>
-                  </Box>
-                  <Box>
-                    <Box>Attack</Box>
-                    <Box>{pokemon.attack}</Box>
-                  </Box>
-                  <Box>
-                    <Box>Defense</Box>
-                    <Box>{pokemon.defense}</Box>
-                  </Box>
-                </Box>
-              </Box>
-              <Box display="flex">
-                <Button onClick={() => handleAdd(pokemon)}>Adicionar</Button>
-              </Box>
-            </Box>
+            <Card
+              key={index}
+              pokemon={newPokemonObject}
+              onEditClik={() => null}
+              setEditingPokemon={() => null}
+              isAdd={true}
+            />
           );
         })}
       </Grid>

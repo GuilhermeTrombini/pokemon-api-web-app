@@ -28,19 +28,7 @@ export interface PokemonObj {
 }
 
 const initialState: PokemonState = {
-  pokemons: [
-    {
-      id: 0,
-      name: "",
-      img: "",
-      species: "",
-      health: 0,
-      height: 0,
-      weight: 0,
-      attack: 0,
-      defense: 0,
-    },
-  ],
+  pokemons: [],
 };
 
 export const pokemonSlice = createSlice({
