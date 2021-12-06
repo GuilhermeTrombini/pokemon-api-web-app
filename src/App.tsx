@@ -11,7 +11,7 @@ function App() {
         <Tabs defaultIndex={0}>
           <TabList>
             <Tab>Pokemon Search</Tab>
-            <Tab>Pokedex</Tab>
+            <Tab>My Pokemons</Tab>
           </TabList>
           <TabPanels>
             <TabPanel>

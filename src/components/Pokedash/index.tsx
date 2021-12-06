@@ -11,6 +11,7 @@ import {
   Button,
   FormLabel,
   Input,
+  Box,
 } from "@chakra-ui/react";
 
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
@@ -160,7 +161,7 @@ export function Pokedash() {
                     colorScheme="blue"
                     mr={3}
                   >
-                    Salvar
+                    Save
                   </Button>
                 </ModalFooter>
               </Form>
@@ -168,28 +169,44 @@ export function Pokedash() {
           </Formik>
         </ModalContent>
       </Modal>
-      <Grid
-        templateColumns={
-          window.innerWidth > 1024
-            ? "repeat(4, 1fr)"
-            : window.innerWidth > 768
-            ? "repeat(2, 1fr)"
-            : "repeat(1, 1fr)"
-        }
-        gap={3}
-      >
-        {myPokemons.pokemons.map((pokemon: any, index) => {
-          return (
-            <Card
-              key={index}
-              pokemon={pokemon}
-              onEditClick={setIsOpen}
-              setEditingPokemon={setEditingPokemon}
-              isAdd={false}
-            />
-          );
-        })}
-      </Grid>
+      {myPokemons.pokemons.length <= 0 ? (
+        <Box
+          color="gray.500"
+          fontWeight="semibold"
+          letterSpacing="wide"
+          fontSize="xs"
+          marginTop="60px"
+          textTransform="uppercase"
+          ml="2"
+        >
+          <Box>No Pokemons to be show, add pokemons to see them here.</Box>
+        </Box>
+      ) : (
+        <Grid
+          templateColumns={
+            window.innerWidth > 1500
+              ? "repeat(4, 1fr)"
+              : window.innerWidth > 1170
+              ? "repeat(3, 1fr)"
+              : window.innerWidth > 768
+              ? "repeat(2, 1fr)"
+              : "repeat(1, 1fr)"
+          }
+          gap={3}
+        >
+          {myPokemons.pokemons.map((pokemon: any, index) => {
+            return (
+              <Card
+                key={index}
+                pokemon={pokemon}
+                onEditClick={setIsOpen}
+                setEditingPokemon={setEditingPokemon}
+                isAdd={false}
+              />
+            );
+          })}
+        </Grid>
+      )}
     </div>
   );
 }
