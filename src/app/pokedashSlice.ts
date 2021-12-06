@@ -40,9 +40,9 @@ export const pokemonSlice = createSlice({
     },
     remove: (state, action) => {
       var indexToRemove = -1;
-      state.pokemons.map((item, index) => {
-        if (item.id === action.payload.id) {
-          return (indexToRemove = index);
+      state.pokemons.forEach((item, index) => {
+        if (item.id === action.payload) {
+          indexToRemove = index;
         } else {
           return null;
         }
